@@ -1,72 +1,56 @@
-# BANKNIFTY LSTM – Intraday Price Direction Prediction
 
-This repository implements a complete machine-learning pipeline for preparing  
-high-frequency BANKNIFTY 1-minute OHLC data, engineering quantitative features,  
-converting them into sliding-window sequences, training an LSTM model, and  
+BANKNIFTY LSTM – Intraday Price Direction Prediction
+This repository implements a complete machine-learning pipeline for preparing
+high-frequency BANKNIFTY 1-minute OHLC data, engineering quantitative features,
+converting them into sliding-window sequences, training an LSTM model, and
 evaluating its predictive performance on next-minute price direction.
 
-The goal is not to build a trading strategy, but to demonstrate how intraday  
-financial data behaves when structured for supervised learning — and to analyze  
-why deep learning models frequently converge to random-like accuracy on  
+The goal is not to build a trading strategy, but to demonstrate how intraday
+financial data behaves when structured for supervised learning — and to analyze
+why deep learning models frequently converge to random-like accuracy on
 ultrashort-horizon predictions.
 
----
-
-## 1. Problem Overview
-
-The task is to predict whether the **next 1-minute candle** closes **up (1)** or  
-**down (0)** relative to the current candle.
+1. Problem Overview
+The task is to predict whether the next 1-minute candle closes up (1) or
+down (0) relative to the current candle.
 
 This is a classical but notoriously difficult problem because:
 
-- Microstructure noise dominates at 1-minute resolution  
-- OHLC-only features contain very weak directional signal  
-- Bid–ask bounce causes randomness in small candle movements  
-- Market efficiency makes short-horizon prediction extremely limited  
-
-This project shows what a complete deep-learning pipeline looks like for such  
+Microstructure noise dominates at 1-minute resolution
+OHLC-only features contain very weak directional signal
+Bid–ask bounce causes randomness in small candle movements
+Market efficiency makes short-horizon prediction extremely limited
+This project shows what a complete deep-learning pipeline looks like for such
 data — and why accuracy often converges near 50%.
 
----
-
-## 2. High-Level Architecture
-
+2. High-Level Architecture
 The ML workflow includes:
 
-### **A. Data Processing**
-- Load raw OHLC data  
-- Clean timestamps and missing values  
-
-### **B. Feature Engineering**
-- Returns  
-- High–Low range  
-- Moving averages  
-- Realized volatility  
-
-### **C. Sequence Construction**
-- Convert time-series into fixed-length LSTM windows  
-- Use stride (`STEP=3`) to manage dataset size  
-
-### **D. Train/Validation/Test Split**
-- Time-based split (no shuffling to avoid leakage)
-
-### **E. Scaling**
-- Fit scaler only on training set  
-- Apply to val/test sets  
-
-### **F. LSTM Model Training**
-- 2-layer LSTM  
-- Hidden size 64  
-- Dropout 0.2  
-- Binary classification (sigmoid output)
-
-### **G. Evaluation & Saving**
-- Evaluate on hold-out test set  
-- Save best checkpoint under `models/`
-
-#### **Architecture Diagram**
-
-```text
+A. Data Processing
+Load raw OHLC data
+Clean timestamps and missing values
+B. Feature Engineering
+Returns
+High–Low range
+Moving averages
+Realized volatility
+C. Sequence Construction
+Convert time-series into fixed-length LSTM windows
+Use stride (STEP=3) to manage dataset size
+D. Train/Validation/Test Split
+Time-based split (no shuffling to avoid leakage)
+E. Scaling
+Fit scaler only on training set
+Apply to val/test sets
+F. LSTM Model Training
+2-layer LSTM
+Hidden size 64
+Dropout 0.2
+Binary classification (sigmoid output)
+G. Evaluation & Saving
+Evaluate on hold-out test set
+Save best checkpoint under models/
+Architecture Diagram
              Raw OHLC Data
                     |
                     v
@@ -86,29 +70,20 @@ The ML workflow includes:
                     |
                     v
         Evaluation + Model Checkpoint Saving
-```
+3. Tech Stack
+Python 3.10
 
----
+PyTorch for LSTM model
 
-## 3. Tech Stack
+NumPy / Pandas for preprocessing
 
-- **Python 3.10**
+scikit-learn for scaling & metrics
 
-- **PyTorch** for LSTM model
+dotenv for API keys (optional)
 
-- **NumPy / Pandas** for preprocessing
+Conda for environment management
 
-- **scikit-learn** for scaling & metrics
-
-- **dotenv** for API keys (optional)
-
-- **Conda** for environment management
-
----
-
-## 4. Project Structure
-
-```text
+4. Project Structure
 BankNiftyLSTM/
 │
 ├── data/                     # Raw OHLC data (ignored in Git)
@@ -125,163 +100,131 @@ BankNiftyLSTM/
 ├── .gitignore
 └── README.md
 
-
-```
-
----
-
-## 5. Feature Engineering
-
+5. Feature Engineering
 The following quantitative features are generated from raw OHLC candles:
 
-- Close price
+Close price
 
-- Log returns
+Log returns
 
-- High–Low range
+High–Low range
 
-- Short-term return moving average
+Short-term return moving average
 
-- Long-term return moving average
+Long-term return moving average
 
-- Short-term realized volatility
+Short-term realized volatility
 
-- Long-term realized volatility
+Long-term realized volatility
 
-These are common features used across quant finance and academic literature for
-intraday price modeling.
+These are common features used across quant finance and academic literature for intraday price modeling.
 
 After sequence creation, all features are standard-scaled.
 
----
-
-## 6. Installation
-
-### **6.1 Create Conda Environment**
-```bash
+6. Installation
+6.1 Create Conda Environment
 conda create -n banknifty python=3.10
 conda activate banknifty
-```
-
-### **6.2 Install Dependencies**
-```bash
+6.2 Install Dependencies
 pip install numpy pandas torch scikit-learn python-dotenv
-```
 (Optional)
-```bash
+
 pip freeze > requirements.txt
-```
----
-
-## 7. Running the Training Script
-
+7. Running the Training Script
 Execute:
-```bash
+
 python train_lstm.py
-```
 This command performs:
 
-- Loading and preprocessing of BANKNIFTY OHLC data
+Loading and preprocessing of BANKNIFTY OHLC data
 
-- Feature engineering
+Feature engineering
 
-- Sliding-window sequence construction
+Sliding-window sequence construction
 
-- Train/validation/test splitting
+Train/validation/test splitting
 
-- Feature scaling
+Feature scaling
 
-- LSTM model training
+LSTM model training
 
-- Validation and test evaluation
+Validation and test evaluation
 
-- Saving the best model checkpoint under models/
+Saving the best model checkpoint under models/
 
 The script serves as the single entry point for the entire ML pipeline.
 
----
-
-## 8. Performance Summary
-
+8. Performance Summary
 Observed performance on typical BANKNIFTY intraday datasets:
 
-- **Validation Accuracy**: ~50%
-- **Test Accuracy**: ~49%
-
+Validation Accuracy: ~50%
+Test Accuracy: ~49%
 These values align with well-established research showing that:
 
-Market microstructure, latency uncertainty, and limited information density all
-contribute to this outcome.
+Market microstructure, latency uncertainty, and limited information density all contribute to this outcome.
 
----
+9. Interpretation
+This project illustrates the limitations of using deep learning for ultrashort-horizon financial forecasting.
 
-## 9. Interpretation
+Key insights:
 
-This project illustrates the limitations of using deep learning for
-ultrashort-horizon financial forecasting.
+1-minute candle direction is dominated by noise
 
-**Key insights:**
+LSTMs have difficulty capturing predictive structure at this horizon
 
-- 1-minute candle direction is dominated by noise
+More complex features are required for meaningful predictive lift
 
-- LSTMs have difficulty capturing predictive structure at this horizon
+Quantitative models in production typically rely on:
 
-- More complex features are required for meaningful predictive lift
+Order-book imbalance
 
-**Quantitative models in production typically rely on:**
+Volume and liquidity metrics
 
-- Order-book imbalance
+Queue position changes
 
-- Volume and liquidity metrics
+Volatility & regime indicators
 
-- Queue position changes
-
-- Volatility & regime indicators
-
-- Microstructure features
+Microstructure features
 
 Thus, this project is best viewed as:
 
-*A demonstration of the ML pipeline, not a trading strategy.*
+A demonstration of the ML pipeline, not a trading strategy.
 
----
-
-## 10. Possible Extensions
-
+10. Possible Extensions
 For more realistic market modeling, you could add:
 
-**A. Additional Feature Sets**
+A. Additional Feature Sets
 
-- VWAP
+VWAP
 
-- Market depth
+Market depth
 
-- Tick-rule buy/sell pressure
+Tick-rule buy/sell pressure
 
-- Spread / slippage metrics
+Spread / slippage metrics
 
-**B. Regime Detection**
+B. Regime Detection
 
-- Volatility buckets
+Volatility buckets
 
-- Trend/non-trend regimes
+Trend/non-trend regimes
 
-- Autocorrelation regimes
+Autocorrelation regimes
 
-**C. Alternative Architectures**
+C. Alternative Architectures
 
-- GRUs
+GRUs
 
-- Temporal CNNs
+Temporal CNNs
 
-- Transformers
+Transformers
 
-- DeepLOB-style models
+DeepLOB-style models
 
-**D. LLM-Based Interpretation**
+D. LLM-Based Interpretation
 
 Use llm_explain.py to generate natural-language summaries for model outputs.
 
-**E. Online Learning**
+E. Online Learning
 
 Update the model as new market data streams in.
