@@ -92,58 +92,12 @@ conda activate banknifty
 pip install numpy pandas torch scikit-learn python-dotenv
 ```
 ---
+
 ## 6. Running the Training Script
 
 Execute the full training pipeline:
 
 ```bash
 python train_lstm.py
-This command performs:
-
-Loading and preprocessing of BANKNIFTY OHLC data
-
-Feature engineering
-
-Sliding-window sequence construction
-
-Train/validation/test splitting
-
-Feature scaling
-
-LSTM model training
-
-Validation and test evaluation
-
-Saving the best model checkpoint to the models/ directory
-
-The script serves as the single entry point for the entire workflow.
-
-7. Performance Summary
-Observed results on typical intraday datasets:
-
-Validation Accuracy: ~50%
-
-Test Accuracy: ~49%
-
-These results match empirical findings showing that next-minute price direction based solely on OHLC-derived features behaves like a random process due to market microstructure noise.
-
-8. Interpretation
-This project is intended as an analytical machine learning exercise rather than a predictive trading system.
-
-Key takeaways:
-
-Extracting directional signal from 1-minute OHLC data is extremely challenging.
-
-LSTMs struggle with ultra-short-horizon forecasting where noise dominates.
-
-Practical quantitative models typically incorporate additional signals such as:
-
-Order-book imbalance
-
-Volume and liquidity metrics
-
-Volatility regimes
-
-Market microstructure features
-
+This command performs:Loading and preprocessing of BANKNIFTY OHLC dataFeature engineeringSliding-window sequence constructionTrain/validation/test splittingFeature scalingLSTM model trainingValidation and test evaluationSaving the best model checkpoint to the models/ directoryThe script serves as the single entry point for the entire workflow.7. Performance SummaryObserved results on typical intraday datasets:Validation Accuracy: $\sim 50\%$Test Accuracy: $\sim 49\%$These results match empirical findings showing that next-minute price direction based solely on OHLC-derived features behaves like a random process due to market microstructure noise.8. InterpretationThis project is intended as an analytical machine learning exercise rather than a predictive trading system.Key takeaways:Extracting directional signal from 1-minute OHLC data is extremely challenging.LSTMs struggle with ultra-short-horizon forecasting where noise dominates.Practical quantitative models typically incorporate additional signals such as:Order-book imbalanceVolume and liquidity metricsVolatility regimesMarket microstructure featuresThe results highlight the limitations of deep learning models in high-frequency financial prediction tasks.
 The results highlight the limitations of deep learning models in high-frequency financial prediction tasks.
