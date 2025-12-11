@@ -228,7 +228,7 @@ ultrashort-horizon financial forecasting.
 
 - More complex features are required for meaningful predictive lift
 
-*Quantitative models in production typically rely on:*
+**Quantitative models in production typically rely on:**
 
 - Order-book imbalance
 
