@@ -1,21 +1,15 @@
 # BANKNIFTY LSTM – Intraday Price Direction Prediction
 
-This repository implements a complete machine-learning pipeline for preparing  
-high-frequency BANKNIFTY 1-minute OHLC data, engineering quantitative features,  
-converting them into sliding-window sequences, training an LSTM model, and  
-evaluating its predictive performance on next-minute price direction.
+This repository implements a complete machine-learning pipeline for preparing high-frequency BANKNIFTY 1-minute OHLC data, engineering quantitative features, converting them into sliding-window sequences, training an LSTM model, and evaluating its predictive performance on next-minute price direction.
 
 The goal is not to build a trading strategy, but to demonstrate how intraday  
-financial data behaves when structured for supervised learning — and to analyze  
-why deep learning models frequently converge to random-like accuracy on  
-ultrashort-horizon predictions.
+financial data behaves when structured for supervised learning — and to analyze why deep learning models frequently converge to random-like accuracy on ultrashort-horizon predictions.
 
 ---
 
 ## 1. Problem Overview
 
-The task is to predict whether the **next 1-minute candle** closes **up (1)** or  
-**down (0)** relative to the current candle.
+The task is to predict whether the **next 1-minute candle** closes **up (1)** or **down (0)** relative to the current candle.
 
 This is a classical but notoriously difficult problem because:
 
