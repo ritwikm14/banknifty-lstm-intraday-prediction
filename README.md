@@ -1,174 +1,117 @@
-This repository contains a fully implemented deep learning pipeline built to evaluate whether a Long Short-Term Memory (LSTM) neural network can predict the next-minute price direction of BANKNIFTY using 1-minute OHLC data.
-The project follows a research-oriented workflow similar to what quantitative analysts and ML engineers use in financial time-series modeling.
+# BANKNIFTY LSTM — Intraday Price Direction Prediction
 
-The primary objective is signal extraction, noise analysis, and performance evaluation, not trading strategy generation.
+This repository implements a complete machine learning pipeline for predicting the next-minute price direction of BANKNIFTY using 1-minute OHLC data. The project demonstrates how to structure high-frequency financial time-series for sequence modeling using an LSTM classifier. The focus is analytical rather than predictive performance.
 
-1. Project Overview
+---
 
-Financial markets at the 1-minute frequency exhibit extremely low signal-to-noise ratios.
-This project investigates whether engineered features combined with an LSTM can produce any predictive advantage over randomness.
+## 1. Overview
 
-The workflow includes:
+The pipeline performs the following steps:
 
-Data ingestion and feature engineering
+1. Load and preprocess 1-minute OHLC data  
+2. Engineer features relevant to intraday movement  
+3. Generate fixed-length sliding windows for sequence modeling  
+4. Split data into train, validation, and test sets  
+5. Normalize features  
+6. Train an LSTM classifier  
+7. Evaluate performance and save the best model  
 
-Sliding-window sequence construction
+The objective is to evaluate whether short-horizon directional signal exists in price-based features.
 
-Train/validation/test splitting
+---
 
-Scaling and normalization
-
-LSTM training and evaluation
-
-Saving best model weights
-
-The final results demonstrate that 1-minute direction forecasting behaves as a near-random process, consistent with microstructure theory.
-
-2. Key Features
-Modeling & Data Pipeline
-
-Uses 1-minute OHLC data
-
-Engineers price-based and volatility-based features
-
-Generates sequential windows for LSTM input
-
-Splits data chronologically (train/val/test)
-
-Conducts model training with BCE loss and accuracy metrics
-
-Saves best-performing model checkpoint
-
-Technical Highlights
-
-Two-layer LSTM
-
-Hidden dimension = 64
-
-Dropout = 0.2
-
-Binary classification (up/down)
-
-Sliding window generation with configurable sequence length
-
-3. Project Structure
-
-The repository is structured for clarity, modularity, and scalability:
+## 2. Project Structure
 
 BankNiftyLSTM/
 │
-├── api/                       # Optional REST API endpoints for future extensions
-│   └── main.py
+├── data/ # Raw data (ignored in version control)
+├── models/ # Saved model checkpoints
 │
-├── app/                       # Optional UI or dashboard components
-│   └── dashboard.py
+├── src/
+│ ├── config.py # Configuration parameters and paths
+│ ├── data_utils.py # Data loading, feature engineering, sequence creation
+│ ├── lstm_model.py # PyTorch LSTM model
+│ ├── serving.py # Optional inference utilities
+│ └── llm_explain.py # Optional LLM-based explanation module
 │
-├── data/                      # Raw data directory (ignored in git)
-│
-├── models/                    # Saved LSTM model checkpoints (.pt files)
-│
-├── src/                       # Core ML and data processing modules
-│   ├── config.py              # Paths, hyperparameters, constants
-│   ├── data_utils.py          # Data loading, feature engineering, sequence creation
-│   ├── lstm_model.py          # PyTorch LSTM architecture
-│   ├── serving.py             # Optional model inference utilities
-│   └── llm_explain.py         # Optional LLM-based natural language explanation
-│
-├── train_lstm.py              # Main training script (entry point)
-│
-├── .gitignore                 # Excludes sensitive files (e.g., .env, models/)
-│
-└── README.md                  # Project documentation
+├── train_lstm.py # Main training script
+├── .gitignore
+└── README.md
 
+yaml
+Copy code
 
-This structure follows standard machine learning project organization and enables easy extensibility.
+This structure follows standard machine-learning project organization for clarity and extensibility.
 
-4. Installation and Setup
-4.1 Create a Conda environment
+---
+
+## 3. Feature Engineering
+
+The following features are derived from raw OHLC data:
+
+- Close price  
+- Return  
+- High–Low range  
+- Short-term return moving average  
+- Long-term return moving average  
+- Short-term realized volatility  
+- Long-term realized volatility  
+
+All features are normalized after sequence generation.
+
+---
+
+## 4. Model Architecture
+
+The model is a two-layer LSTM with:
+
+- Hidden dimension: 64  
+- Number of layers: 2  
+- Dropout: 0.2  
+- Sigmoid output for binary direction prediction  
+
+Loss function: Binary Cross-Entropy  
+Optimizer: Adam  
+
+The model predicts whether the next candle closes higher than the current one.
+
+---
+
+## 5. Installation
+
+### 5.1 Create environment
+```bash
 conda create -n banknifty python=3.10
 conda activate banknifty
-
-4.2 Install required libraries
-
-(If you want, I can generate a requirements.txt)
-
+5.2 Install dependencies
+bash
+Copy code
 pip install numpy pandas torch scikit-learn python-dotenv
-
-5. API Keys (Optional)
-
-If you use LLM-based explanation features in llm_explain.py, create a .env file:
-
-OPENAI_API_KEY=your_key_here
-
-
-This file is ignored by Git and remains local.
+(If needed, a requirements.txt can be generated.)
 
 6. Running the Training Script
+Execute:
 
-Run LSTM training:
-
+bash
+Copy code
 python train_lstm.py
+This runs the full pipeline: feature engineering, sequence creation, model training, validation, test evaluation, and saving the best checkpoint under models/.
 
+7. Performance Summary
+Typical observed results:
 
-The script will:
+Validation Accuracy: ~50%
 
-Load raw OHLC data
+Test Accuracy: ~49%
 
-Engineer features
+These results are consistent with empirical evidence that next-minute direction forecasting using only price-based features is statistically indistinguishable from randomness due to market microstructure noise.
 
-Build sequential windows
+8. Interpretation
+The model serves as an analytical demonstration rather than a predictive trading system.
+The results highlight:
 
-Split into train/validation/test
+The challenge of extracting signal from high-frequency financial data
 
-Normalize data
+The limitations of LSTMs for ultra-short-horizon forecasting
 
-Train the LSTM model
-
-Evaluate test accuracy
-
-Save the best model under models/
-
-7. Results Summary
-
-Observed performance (typical output):
-
-Validation Accuracy: ~50.3%
-
-Test Accuracy: ~49.7%
-
-Behavior: No statistically significant edge over randomness
-
-This aligns with established findings:
-short-horizon (1-minute) direction prediction is generally not predictable using price-based features alone.
-
-8. Interpretation and Practical Insights
-
-1-minute candles are dominated by noise and microstructure effects
-
-LSTMs cannot extract stable directional signals from such data
-
-The exercise is valuable academically because it demonstrates:
-
-Limitations of deep learning in high-frequency finance
-
-Impact of noise and volatility on predictive modeling
-
-Importance of feature quality and data granularity
-
-This project is therefore best positioned as an exploratory analysis and ML workflow demonstration.
-
-9. Possible Extensions
-
-Future directions that may improve predictive performance:
-
-Transformer or Temporal Convolution (TCN) architectures
-
-Market microstructure features (order imbalance, depth, liquidity)
-
-Regime detection (volatility clustering, trend phases)
-
-Multi-horizon prediction instead of next-minute direction
-
-Ensemble or hybrid models
-
-Probabilistic forecasting instead of binary classification
+The importance of richer features (order-book data, volume imbalance, etc.) in real-world quantitative research
