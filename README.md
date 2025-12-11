@@ -84,34 +84,64 @@ The model predicts whether the next candle closes higher than the current one.
 conda create -n banknifty python=3.10
 conda activate banknifty
 5.2 Install dependencies
-bash
-Copy code
 pip install numpy pandas torch scikit-learn python-dotenv
-(If needed, a requirements.txt can be generated.)
+
+
+(If required, a requirements.txt file can be provided.)
 
 6. Running the Training Script
-Execute:
 
-bash
-Copy code
+Run the training pipeline using:
+
 python train_lstm.py
-This runs the full pipeline: feature engineering, sequence creation, model training, validation, test evaluation, and saving the best checkpoint under models/.
+
+
+This executes the complete workflow including:
+
+Feature engineering
+
+Sliding-window sequence generation
+
+Train/validation/test splitting
+
+Feature scaling
+
+LSTM training
+
+Evaluation on the test set
+
+Saving the best model checkpoint under models/
 
 7. Performance Summary
-Typical observed results:
+
+Expected performance on typical intraday datasets:
 
 Validation Accuracy: ~50%
 
 Test Accuracy: ~49%
 
-These results are consistent with empirical evidence that next-minute direction forecasting using only price-based features is statistically indistinguishable from randomness due to market microstructure noise.
+This outcome aligns with established findings that next-minute direction prediction using only OHLC-based features is statistically close to random, due to the inherent noise and unpredictability of high-frequency markets.
 
 8. Interpretation
-The model serves as an analytical demonstration rather than a predictive trading system.
-The results highlight:
 
-The challenge of extracting signal from high-frequency financial data
+This project is intended as an analytical and educational demonstration rather than a predictive trading model.
 
-The limitations of LSTMs for ultra-short-horizon forecasting
+Key observations:
+
+Extracting meaningful signal from 1-minute price data is extremely challenging.
+
+LSTMs struggle with ultra-short-horizon forecasting where noise dominates.
+
+Real-world quantitative forecasting typically requires additional data, such as:
+
+Order-book depth and imbalance
+
+Trade volume and liquidity metrics
+
+Volatility regimes
+
+Market microstructure signals
+
+The results reinforce the limitations of deep learning models in high-frequency financial prediction tasks.
 
 The importance of richer features (order-book data, volume imbalance, etc.) in real-world quantitative research
