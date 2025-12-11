@@ -1,22 +1,24 @@
 # BANKNIFTY LSTM — Intraday Price Direction Prediction
 
-This repository implements a complete machine learning pipeline for predicting the next-minute price direction of BANKNIFTY using 1-minute OHLC data. The project demonstrates how to structure high-frequency financial time-series for sequence modeling using an LSTM classifier. The focus is analytical rather than predictive performance.
+This repository implements a complete machine-learning pipeline for predicting the next-minute price direction of BANKNIFTY using 1-minute OHLC data.  
+The objective is to structure high-frequency financial data for sequence modeling and evaluate LSTM performance under short-horizon market noise.
 
 ---
 
 ## 1. Overview
 
-The pipeline performs the following steps:
+The pipeline includes:
 
-1. Load and preprocess 1-minute OHLC data  
-2. Engineer features relevant to intraday movement  
-3. Generate fixed-length sliding windows for sequence modeling  
-4. Split data into train, validation, and test sets  
-5. Normalize features  
-6. Train an LSTM classifier  
-7. Evaluate performance and save the best model  
+- Data loading and preprocessing  
+- Feature engineering  
+- Sliding-window sequence generation  
+- Train/validation/test splitting  
+- Feature scaling  
+- LSTM model training  
+- Evaluation on hold-out data  
+- Saving the best model checkpoint  
 
-The objective is to evaluate whether short-horizon directional signal exists in price-based features.
+The focus is on analytical evaluation rather than trading performance.
 
 ---
 
@@ -25,23 +27,22 @@ The objective is to evaluate whether short-horizon directional signal exists in 
 BankNiftyLSTM/
 │
 ├── data/ # Raw data (ignored in version control)
-├── models/ # Saved model checkpoints
+├── models/ # Saved LSTM checkpoints
 │
 ├── src/
 │ ├── config.py # Configuration parameters and paths
-│ ├── data_utils.py # Data loading, feature engineering, sequence creation
-│ ├── lstm_model.py # PyTorch LSTM model
-│ ├── serving.py # Optional inference utilities
+│ ├── data_utils.py # Data processing, feature engineering, sequence creation
+│ ├── lstm_model.py # PyTorch LSTM architecture
+│ ├── serving.py # Optional model inference utilities
 │ └── llm_explain.py # Optional LLM-based explanation module
 │
 ├── train_lstm.py # Main training script
 ├── .gitignore
 └── README.md
 
-yaml
-Copy code
 
-This structure follows standard machine-learning project organization for clarity and extensibility.
+
+This structure follows standard ML project conventions for clarity and maintainability.
 
 ---
 
@@ -57,21 +58,21 @@ The following features are derived from raw OHLC data:
 - Short-term realized volatility  
 - Long-term realized volatility  
 
-All features are normalized after sequence generation.
+All features are normalized following sequence creation.
 
 ---
 
-## 4. Model Architecture
+## 4. LSTM Model
 
-The model is a two-layer LSTM with:
+The architecture consists of:
 
+- Two LSTM layers  
 - Hidden dimension: 64  
-- Number of layers: 2  
 - Dropout: 0.2  
-- Sigmoid output for binary direction prediction  
+- Sigmoid output for binary classification  
 
-Loss function: Binary Cross-Entropy  
-Optimizer: Adam  
+**Loss Function:** Binary Cross-Entropy  
+**Optimizer:** Adam  
 
 The model predicts whether the next candle closes higher than the current one.
 
@@ -80,68 +81,69 @@ The model predicts whether the next candle closes higher than the current one.
 ## 5. Installation
 
 ### 5.1 Create environment
+
 ```bash
 conda create -n banknifty python=3.10
 conda activate banknifty
-5.2 Install dependencies
+```
+## 5.2 Install dependencies
+
+```bash
 pip install numpy pandas torch scikit-learn python-dotenv
+```
+---
+## 6. Running the Training Script
 
+Execute the full training pipeline:
 
-(If required, a requirements.txt file can be provided.)
-
-6. Running the Training Script
-
-Run the training pipeline using:
-
+```bash
 python train_lstm.py
+This command performs:
 
-
-This executes the complete workflow including:
+Loading and preprocessing of BANKNIFTY OHLC data
 
 Feature engineering
 
-Sliding-window sequence generation
+Sliding-window sequence construction
 
 Train/validation/test splitting
 
 Feature scaling
 
-LSTM training
+LSTM model training
 
-Evaluation on the test set
+Validation and test evaluation
 
-Saving the best model checkpoint under models/
+Saving the best model checkpoint to the models/ directory
+
+The script serves as the single entry point for the entire workflow.
 
 7. Performance Summary
-
-Expected performance on typical intraday datasets:
+Observed results on typical intraday datasets:
 
 Validation Accuracy: ~50%
 
 Test Accuracy: ~49%
 
-This outcome aligns with established findings that next-minute direction prediction using only OHLC-based features is statistically close to random, due to the inherent noise and unpredictability of high-frequency markets.
+These results match empirical findings showing that next-minute price direction based solely on OHLC-derived features behaves like a random process due to market microstructure noise.
 
 8. Interpretation
+This project is intended as an analytical machine learning exercise rather than a predictive trading system.
 
-This project is intended as an analytical and educational demonstration rather than a predictive trading model.
+Key takeaways:
 
-Key observations:
-
-Extracting meaningful signal from 1-minute price data is extremely challenging.
+Extracting directional signal from 1-minute OHLC data is extremely challenging.
 
 LSTMs struggle with ultra-short-horizon forecasting where noise dominates.
 
-Real-world quantitative forecasting typically requires additional data, such as:
+Practical quantitative models typically incorporate additional signals such as:
 
-Order-book depth and imbalance
+Order-book imbalance
 
-Trade volume and liquidity metrics
+Volume and liquidity metrics
 
 Volatility regimes
 
-Market microstructure signals
+Market microstructure features
 
-The results reinforce the limitations of deep learning models in high-frequency financial prediction tasks.
-
-The importance of richer features (order-book data, volume imbalance, etc.) in real-world quantitative research
+The results highlight the limitations of deep learning models in high-frequency financial prediction tasks.
