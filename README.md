@@ -86,7 +86,7 @@ The ML workflow includes:
 
 ## 3. Tech Stack
 
-- **Python 3.10**
+- **Python 3.11**
 
 - **PyTorch** for LSTM model
 
